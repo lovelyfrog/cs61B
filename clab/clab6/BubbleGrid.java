@@ -14,6 +14,39 @@ public class BubbleGrid {
      * and have no side-effects to grid. */
     public int[] popBubbles(int[][] darts) {
         // TODO
-        return null;
+        int[] res = new int[darts.length];
+        int rowNum = grid.length;
+        int colNum = grid[0].length;
+        for (int i=0; i<res.length; i++) {
+            res[i] = solve(grid, darts[i], rowNum, colNum);
+        }
+        return res;
     }
+
+    public int solve(int[][] grid, int[] pop, int rowNum, int colNum) {
+        int fallNumber = 0;
+        grid[pop[0]][pop[1]] = 0;
+        UnionFind tmp = new UnionFind(rowNum * colNum);
+        for (int i=1; i<rowNum; i++) {
+            for (int j=0; j<colNum; j++) {
+                if (grid[i][j] == 1) {
+                    if (j > 0 && grid[i][j-1] == 1)
+                        tmp.union(i*colNum+j, i*colNum+(j-1), colNum);
+                    if (grid[i-1][j] == 1)
+                        tmp.union((i-1)*colNum+j, i*colNum+j, colNum);
+                }
+            }
+        }
+
+        for (int i=0; i<rowNum; i++) {
+            for (int j=0; j<colNum; j++) {
+                if (grid[i][j] == 1 && tmp.find(i*colNum+j) >= colNum) {
+                    fallNumber += 1;
+                    grid[i][j] = 0;
+                }
+            }
+        }
+        return fallNumber;
+    }
+
 }
