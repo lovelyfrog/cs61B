@@ -30,7 +30,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
         this.size = 0;
         listArray = new LinkedList[initialSize];
         for (int i=0; i<initialSize; i++) {
-            listArray[i] = null;
+            listArray[i] = new LinkedList<>();
         }
     }
 
@@ -38,7 +38,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
         MyHashMap<K, V> tmp = new MyHashMap<>(initialSize*2, loadFactor);
         for (int i=0; i<initialSize; i++) {
             LinkedList<Node> p = listArray[i];
-            if (p != null) {
+            if (p.size() != 0) {
                 int k = 0;
                 Node pLast = p.getLast();
                 while (p.get(k) != pLast) {
@@ -46,9 +46,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
                     tmp.put(tmpNode.key, tmpNode.value);
                     k += 1;
                 }
-                if (pLast != null) {
-                    tmp.put(pLast.key, pLast.value);
-                }
+                tmp.put(pLast.key, pLast.value);
             }
         }
         this.initialSize = tmp.initialSize;
@@ -76,7 +74,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
             int keyHash = hash(key);
             LinkedList<Node> p = listArray[keyHash];
             //how to find p's next is a quesion, here I use a stupid solution
-            if (p != null) {
+            if (p.size() != 0) {
                 int i = 0;
                 Node pLast = p.getLast();
                 while (p.get(i) != pLast) {
@@ -86,7 +84,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
                     }
                     i += 1;
                 }
-                if (pLast != null && pLast.key.equals(key)) {
+                if (pLast.key.equals(key)) {
                     return pLast.value;
                 }
             }
@@ -110,7 +108,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
         Set<K> tmp = new HashSet<>();
         for (int i=0; i<initialSize; i++) {
             LinkedList<Node> tmpList = listArray[i];
-            if (tmpList != null) {
+            if (tmpList.size() != 0) {
                 Node pLast = tmpList.getLast();
                 if (pLast != null) {
                     int k = 0;
@@ -131,7 +129,7 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
         int keyHash = hash(key);
         LinkedList<Node> p = listArray[keyHash];
         int flag = 0;
-        if (p != null) {
+        if (p.size() != 0) {
             int i = 0;
             Node pLast = p.getLast();
             while (p.get(i) != pLast) {
@@ -153,11 +151,9 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
                 p.add(tmp);
             }
         } else {
-            p = new LinkedList<>();
             Node tmp = new Node(key, value);
             p.add(tmp);
             size += 1;
-            listArray[keyHash] = p;
         }
 
         if ((float)size / initialSize > loadFactor) {
@@ -200,13 +196,12 @@ public class MyHashMap<K extends Object, V> implements Map61B<K, V>{
     }
 
 
-    public static void main(String[] args) {
-        LinkedList<String> ex = new LinkedList<>();
-        ex.add("a");
-        ex.add("b");
-        int a = 1;
-        int b = 4;
-        System.out.println(ex.removeFirst());
-
-    }
+//    public static void main(String[] args) {
+//        LinkedList<String> ex = new LinkedList<>();
+//        ex.add("a");
+//        ex.add("b");
+//        int a = 1;
+//        int b = 4;
+//        System.out.println(ex.getLast());
+//    }
 }
