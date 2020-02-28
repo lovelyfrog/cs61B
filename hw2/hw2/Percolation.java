@@ -30,19 +30,21 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
-        openSitesNumber += 1;
-        array[row][col] = 1;
-        if (col - 1 >= 0 && array[row][col-1] == 1) {
-            set.union(xy2Index(row, col), xy2Index(row, col-1));
-        }
-        if (col + 1 < N && array[row][col+1] == 1) {
-            set.union(xy2Index(row, col), xy2Index(row, col+1));
-        }
-        if (row - 1 >= 0 && array[row-1][col] == 1) {
-            set.union(xy2Index(row, col), xy2Index(row-1, col));
-        }
-        if (row + 1 < N && array[row+1][col] == 1) {
-            set.union(xy2Index(row, col), xy2Index(row+1, col));
+        if (!isOpen(row, col)) {
+            openSitesNumber += 1;
+            array[row][col] = 1;
+            if (col - 1 >= 0 && array[row][col - 1] == 1) {
+                set.union(xy2Index(row, col), xy2Index(row, col - 1));
+            }
+            if (col + 1 < N && array[row][col + 1] == 1) {
+                set.union(xy2Index(row, col), xy2Index(row, col + 1));
+            }
+            if (row - 1 >= 0 && array[row - 1][col] == 1) {
+                set.union(xy2Index(row, col), xy2Index(row - 1, col));
+            }
+            if (row + 1 < N && array[row + 1][col] == 1) {
+                set.union(xy2Index(row, col), xy2Index(row + 1, col));
+            }
         }
     }
 
