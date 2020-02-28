@@ -25,7 +25,7 @@ public class Percolation {
         }
     }
 
-    public int xy2Index(int x, int y) {
+    private int xy2Index(int x, int y) {
         return x*N+y;
     }
 
@@ -68,7 +68,7 @@ public class Percolation {
 
     //Backwash unsolved
     public boolean percolates() {
-        if (set.connected(N*N, N*N+1)) {
+        if (set.connected(N*N, N*N+1) && openSitesNumber > 0) {
             return true;
         }
         return false;
