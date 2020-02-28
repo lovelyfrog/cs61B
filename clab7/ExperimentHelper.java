@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.util.Random;
+
 /**
  * Created by hug.
  */
@@ -15,7 +18,19 @@ public class ExperimentHelper {
      *  N = 8, OIPL: 13
      */
     public static int optimalIPL(int N) {
-        return 0;
+        if (N == 1) {
+            return 0;
+        }
+        return optimalIPL(N-1) + layer(N);
+    }
+
+    private static int layer(int N) {
+        int count = 0;
+        while (N / 2 != 0) {
+            count += 1;
+            N /= 2;
+        }
+        return count;
     }
 
     /** Returns the average depth for nodes in an optimal BST of
@@ -27,6 +42,30 @@ public class ExperimentHelper {
      * @return
      */
     public static double optimalAverageDepth(int N) {
-        return 0;
+        return (double) optimalIPL(N) / N;
+    }
+
+    public static void randomInsert(BST<Double> x) {
+        Random r = new Random();
+        double tmp = r.nextDouble();
+        while (x.contains(tmp)) {
+            tmp = r.nextDouble();
+        }
+        x.add(tmp);
+    }
+
+    public static void randomDelete(BST<Double> x) {
+        double tmp = x.getRandomKey();
+        x.deleteTakingSuccessor(tmp);
+    }
+
+    public static void randomDeleteRandom(BST<Double> x) {
+        double tmp = x.getRandomKey();
+        x.deleteTakingRandom(tmp);
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(1/2);
     }
 }

@@ -239,6 +239,21 @@ public class BST<Key extends Comparable<Key>> {
     }
 
 
+    public double averageDepth() {
+        return (double) totalDepth() / size();
+    }
+
+    public int totalDepth() {
+        return totalDepth(root, 0);
+    }
+
+    public int totalDepth(Node x, int depth) {
+        if (x == null) {
+            return 0;
+        }
+        return depth + totalDepth(x.left, depth + 1) + totalDepth(x.right, depth + 1);
+    }
+
     /**
      * Returns true if this BST is empty.
      * @return {@code true} if this BST is empty; {@code false} otherwise
