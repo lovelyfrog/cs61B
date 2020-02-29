@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private int[][] array;
     private UnionFind set;
+    private UnionFind upSet;
     private int N;
     private int openSitesNumber;
     public Percolation(int N) {
@@ -19,9 +20,11 @@ public class Percolation {
         // N*N: top node
         // N*N+1: bottom node
         set = new UnionFind(N*N+2);
+        upSet = new UnionFind(N*N+1);
         for (int i=0; i<N; i++) {
             set.union(N*N, xy2Index(0, i));
             set.union(N*N+1, xy2Index(N-1, i));
+            upSet.union(N*N, xy2Index(0, i));
         }
     }
 
@@ -35,15 +38,19 @@ public class Percolation {
             array[row][col] = 1;
             if (col - 1 >= 0 && array[row][col - 1] == 1) {
                 set.union(xy2Index(row, col), xy2Index(row, col - 1));
+                upSet.union(xy2Index(row, col), xy2Index(row, col - 1));
             }
             if (col + 1 < N && array[row][col + 1] == 1) {
                 set.union(xy2Index(row, col), xy2Index(row, col + 1));
+                upSet.union(xy2Index(row, col), xy2Index(row, col + 1));
             }
             if (row - 1 >= 0 && array[row - 1][col] == 1) {
                 set.union(xy2Index(row, col), xy2Index(row - 1, col));
+                upSet.union(xy2Index(row, col), xy2Index(row - 1, col));
             }
             if (row + 1 < N && array[row + 1][col] == 1) {
                 set.union(xy2Index(row, col), xy2Index(row + 1, col));
+                upSet.union(xy2Index(row, col), xy2Index(row + 1, col));
             }
         }
     }
@@ -56,7 +63,7 @@ public class Percolation {
     }
 
     public boolean isFull(int row, int col) {
-        if (set.connected(xy2Index(row, col), N*N) && isOpen(row, col)) {
+        if (upSet.connected(xy2Index(row, col), N*N) && isOpen(row, col)) {
             return true;
         }
         return false;
