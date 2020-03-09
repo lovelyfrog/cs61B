@@ -76,8 +76,8 @@ public class KDTree implements PointSet{
         }
         best = nearest(goodSide, target, best);
         // prune
-        if (Math.abs(diff) < Point.distance(best.point, target)) {
-            best = nearest(node.part2, target, best);
+        if (Math.abs(diff) < Math.sqrt(Point.distance(best.point, target))) {
+            best = nearest(badSide, target, best);
         }
         return best;
     }
@@ -89,6 +89,5 @@ public class KDTree implements PointSet{
             return target.getY() - node.point.getY();
         }
     }
-
-
+    
 }

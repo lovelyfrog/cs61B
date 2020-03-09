@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
-import java.util.Random;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class KDTreeTest {
     @Test
@@ -23,17 +23,30 @@ public class KDTreeTest {
     @Test
     public void testRandom() {
         ArrayList<Point> points = new ArrayList<>();
-        long seed = 1;
-        Random r = new Random(seed);
-        for (int i=0; i < 100; i++) {
-            Point tmp = new Point(r.nextDouble(), r.nextDouble());
+        int N = 1000000;
+
+        for (int i=0; i < N; i++) {
+            Point tmp = new Point(StdRandom.uniform(N), StdRandom.uniform(N));
             points.add(tmp);
         }
+        Point target = new Point(StdRandom.uniform(N), StdRandom.uniform(N));
+        // kDTree
         KDTree kd = new KDTree(points);
+        long startTime1 = System.currentTimeMillis();
+        Point retKD = kd.nearest(target.getX(), target.getY());
+        long endTime1 = System.currentTimeMillis();
+        long kdTime = endTime1 - startTime1;
+
+        //NaivePointSet
         NaivePointSet nn = new NaivePointSet(points);
-        Point retKD = kd.nearest(3, 4);
-        Point retNN = nn.nearest(3, 4);
+        long startTime2 = System.currentTimeMillis();
+        Point retNN = nn.nearest(target.getX(), target.getY());
+        long endTime2 = System.currentTimeMillis();
+        long nnTime = endTime2 - startTime2;
+
         assertEquals(retNN.getX(), retKD.getX(), 0.0);
         assertEquals(retNN.getY(), retKD.getY(), 0.0);
+        System.out.println(kdTime);
+        System.out.println(nnTime);
     }
 }
