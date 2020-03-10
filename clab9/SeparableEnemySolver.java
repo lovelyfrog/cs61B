@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.Queue;
 
 public class SeparableEnemySolver {
 
@@ -21,12 +22,84 @@ public class SeparableEnemySolver {
 
     /**
      * Returns true if input is separable, false otherwise.
+     * my solution is a little complex. I construct two Set X and Y,  which save strings.
+     * A less complex way is to make a Map<String, String> party that saves string and the set it belongs to.
+     *  A - B
+     *  |   |  party: {<A, "U">, <B, "V">, <D, "U">, <C, "V">}
+     *  C - D
+     *  all tests pass!
      */
     public boolean isSeparable() {
         // TODO: Fix me
-        return false;
+        Set<String> X = new HashSet<>();
+        Set<String> Y = new HashSet<>();
+        List<String> labels = new ArrayList<>(g.labels());
+        Map<String, Integer> labelIsVisited = new HashMap<>();
+        for (int i=0; i<labels.size(); i++) {
+            labelIsVisited.put(labels.get(i), 0);
+        }
+
+        for (String label: labels) {
+            if (labelIsVisited.get(label) == 0) {
+                if (!DFSSolver(X, Y, 0, label, null, labelIsVisited)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
+    public boolean DFSSolver(Set<String> X, Set<String> Y, int flag, String node, String nodeParent, Map<String, Integer> isVisited) {
+
+        if (flag == 0) {
+            if (Y.contains(node)) return false;
+            if (X.contains(node)) return true;
+            X.add(node);
+        } else {
+            if (X.contains(node)) return false;
+            if (Y.contains(node)) return true;
+            Y.add(node);
+        }
+        isVisited.put(node, 1);
+        Set<String> nodeNeighbors = g.neighbors(node);
+        for (String neighbor: nodeNeighbors) {
+            if (!neighbor.equals(nodeParent)) {
+                if (!DFSSolver(X, Y, 1 - flag, neighbor, node, isVisited)) return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     *   BFS version of isSeparable()
+     *   all tests pass!
+     */
+    public boolean isSeparableBFS() {
+        Map<String, String> party = new HashMap<>();
+        Queue<String> queue = new LinkedList<>();
+        List<String> labels = new ArrayList<>(g.labels());
+        for (String label: labels) {
+            if (!party.containsKey(label)) {
+                party.put(label, "U");
+                queue.add(label);
+                while (queue.size() != 0) {
+                    String tmp = queue.poll();
+                    for (String neighbor: g.neighbors(tmp)) {
+                        String tmpParty = party.get(tmp);
+                        if (!party.containsKey(neighbor)) {
+                            party.put(neighbor, tmpParty.equals("U") ? "V" : "U");
+                            queue.add(neighbor);
+                        }
+                        else {
+                            if (tmpParty.equals(party.get(neighbor))) return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
     /* HELPERS FOR READING IN CSV FILES. */
 
