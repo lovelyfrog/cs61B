@@ -72,8 +72,11 @@ public class WordGraph implements AStarGraph<String> {
     public List<WeightedEdge<String>> neighbors(String s) {
         List<WeightedEdge<String>> neighbs = new ArrayList<>();
         for (String w : words) {
-            if (editDistance(s, w) == 1) {
-                neighbs.add(new WeightedEdge(s, w, 1));
+            // faster!
+            if (Math.abs(s.length() - w.length()) <= 1) {
+                if (editDistance(s, w) == 1) {
+                    neighbs.add(new WeightedEdge(s, w, 1));
+                }
             }
         }
         return neighbs;
