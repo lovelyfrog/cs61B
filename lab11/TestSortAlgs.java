@@ -6,12 +6,24 @@ public class TestSortAlgs {
 
     @Test
     public void testQuickSort() {
-
+        Queue<String> tmp = new Queue<>();
+        tmp.enqueue("b");
+        tmp.enqueue("a");
+        tmp.enqueue("z");
+        tmp.enqueue("g");
+        Queue res = QuickSort.quickSort(tmp);
+        assert isSorted(res) == true;
     }
 
     @Test
     public void testMergeSort() {
-
+        Queue<String> tmp = new Queue<>();
+        tmp.enqueue("b");
+        tmp.enqueue("a");
+        tmp.enqueue("z");
+        tmp.enqueue("g");
+        Queue res = MergeSort.mergeSort(tmp);
+        assert isSorted(res) == true;
     }
 
     /**

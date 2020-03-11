@@ -43,7 +43,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> ans = new Queue<>();
+        for (Item x: items) {
+            Queue<Item> tmp = new Queue<>();
+            tmp.enqueue(x);
+            ans.enqueue(tmp);
+        }
+        return ans;
     }
 
     /**
@@ -62,7 +68,11 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> ans = new Queue<>();
+        while (q1.size() !=0 || q2.size() != 0) {
+            ans.enqueue(getMin(q1, q2));
+        }
+        return ans;
     }
 
     /**
@@ -78,6 +88,34 @@ public class MergeSort {
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        /**
+         *  it's a recursive version, but it will destroy items
+            if (items.size() == 1) {
+                return items;
+            }
+            Queue<Item> part1 = new Queue<>();
+            Queue<Item> part2 = new Queue<>();
+            for (int i=0; i<items.size() / 2; i++) {
+                part1.enqueue(items.dequeue());
+            }
+
+            while (items.size() != 0) {
+                part2.enqueue(items.dequeue());
+            }
+            part1 = mergeSort(part1);
+            part2 = mergeSort(part2);
+            Queue<Item> ans =  mergeSortedQueues(part1, part2);
+            return ans;
+         */
+
+        // it's a non recursive version using queue with items unchanged
+        Queue<Queue<Item>> itemsQueue = new Queue<>();
+        itemsQueue = makeSingleItemQueues(items);
+        while (itemsQueue.size() > 1) {
+            Queue<Item> tmp1 = itemsQueue.dequeue();
+            Queue<Item> tmp2 = itemsQueue.dequeue();
+            itemsQueue.enqueue(mergeSortedQueues(tmp1, tmp2));
+        }
+        return itemsQueue.dequeue();
     }
 }
