@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
-import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
+import static bearmaps.proj2c.utils.Constants.*;
 
 /**
  * Handles requests from the web browser for map images. These images
@@ -84,11 +83,67 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
+//        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+//        System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+        String[][] render_grid;
+        double raster_ul_lon, raster_ul_lat, raster_lr_lon, raster_lr_lat;
+        int depth;
+        boolean query_success = true;
+        depth = 0;
+
+        double distance_per_pixel = (ROOT_LRLON - ROOT_ULLON) / TILE_SIZE;
+        double distance_per_pixel_lat = -(ROOT_LRLAT - ROOT_ULLAT) / TILE_SIZE;
+        double target_DPL = (requestParams.get("lrlon") - requestParams.get("ullon")) / (requestParams.get("w"));
+        int i = 0;
+        for (i=0; i<7; i++) {
+            if (distance_per_pixel > target_DPL) {
+                distance_per_pixel /= 2;
+                distance_per_pixel_lat /= 2;
+                if (i == 6) depth = 7;
+            } else {
+                depth = i;
+                break;
+            }
+        }
+
+        int UL_LAT_TILE, UL_LON_TILE, LR_LAT_TILE, LR_LON_TILE;
+        double pixel_length = distance_per_pixel * TILE_SIZE;
+        double pixel_length_lat = distance_per_pixel_lat * TILE_SIZE;
+        UL_LAT_TILE = (int) ((ROOT_ULLAT - requestParams.get("ullat")) / pixel_length_lat);
+        UL_LON_TILE = (int) (-(ROOT_ULLON - requestParams.get("ullon")) / pixel_length) ;
+        LR_LAT_TILE = (int) ((ROOT_ULLAT - requestParams.get("lrlat")) / pixel_length_lat);
+        LR_LON_TILE = (int) (-(ROOT_ULLON - requestParams.get("lrlon")) / pixel_length);
+
+        raster_ul_lat = -UL_LAT_TILE * pixel_length_lat + ROOT_ULLAT;
+        raster_ul_lon = UL_LON_TILE * pixel_length + ROOT_ULLON;
+        raster_lr_lat = -(LR_LAT_TILE + 1) * pixel_length_lat + ROOT_ULLAT;
+        raster_lr_lon = (LR_LON_TILE + 1) * pixel_length + ROOT_ULLON;
+
+        int row = LR_LAT_TILE - UL_LAT_TILE + 1;
+        int col = LR_LON_TILE - UL_LON_TILE + 1;
+        render_grid = new String[row][col];
+        int x = UL_LON_TILE;
+        int y = UL_LAT_TILE;
+        for (int m=0; m<row; m++) {
+            for (int n=0; n<col; n++) {
+                render_grid[m][n] = "d" + String.valueOf(depth) + "_x" + String.valueOf(x) + "_y" + String.valueOf(y) + ".png";
+                x += 1;
+            }
+            x = UL_LON_TILE;
+            y += 1;
+        }
+
+        results.put("render_grid", render_grid);
+        results.put("raster_ul_lon", raster_ul_lon);
+        results.put("raster_ul_lat", raster_ul_lat);
+        results.put("raster_lr_lon", raster_lr_lon);
+        results.put("raster_lr_lat", raster_lr_lat);
+        results.put("depth", depth);
+        results.put("query_success", query_success);
+
+//        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+//                + "your browser.");
         return results;
     }
 
